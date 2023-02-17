@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include <sstream>
 using namespace std;
 
 class Matrices {
@@ -130,6 +129,123 @@ void init_perm(const int IP[], int IP_vals[], int binary[]) {
     }
 }
 
+void init_lr_split(int ip_vals[], int l[], int r[]) {
+    for (int i = 0; i < 32; i++) {
+        l[i] = ip_vals[i];
+        r[i] = ip_vals[32 + i];
+    }
+}
+
+void pc_1_transform(const int pc_1[], int bin_k_64[], int bin_k_56[]) {
+    for (int i = 0; i < 56; i++) {
+        bin_k_56[i] = bin_k_64[pc_1[i] - 1];
+    }
+}
+
+void init_cd_split(int bin_k_56[], int c[], int d[]) {
+    for (int i = 0; i < 28; i++) {
+        c[i] = bin_k_56[i];
+        d[i] = bin_k_56[28 + i];
+    }
+}
+
+void rotate_1(int c[], int d[]) {
+    int drop_c = c[0];
+    int drop_d = d[0];
+
+    for (int i = 0; i < 27; i++) {
+        c[i] = c[i + 1];
+        d[i] = d[i + 1];
+    }
+
+    c[27] = drop_c;
+    d[27] = drop_d;
+}
+
+void rotate_2(int c[], int d[]) {
+    rotate_1(c, d);
+    rotate_1(c, d);
+}
+
+void cd_combine(int c[], int d[], int bin_k_56[]) {
+    for (int i = 0; i < 28; i++) {
+        bin_k_56[i] = c[i];
+        bin_k_56[28 + i] = d[i];
+    }
+}
+
+void pc_2_transform(const int pc_2[], int bin_k_56[], int subk[][48], int idx) {
+    for (int i = 0; i < 48; i++) {
+        subk[idx][i] = bin_k_56[pc_2[i] - 1];
+    }
+}
+
+void f_func_expansion(const int exp[], int r[], int r_exp[]) {
+    int num = 0;
+    int idx = 0;
+
+    for (int i = 0; i < 32; i++) {
+        num = i + 1;
+
+        for (int j = 0; j < 48; j++) {
+            if (exp[j] == num) {
+                idx = j;
+                r_exp[idx] = r[i];
+            }
+        }
+    }
+}
+
+// arr2 overwritten with result
+void bit_xor(int arr1[], int arr2[], int len) {
+    for (int i = 0; i < len; i++) {
+        if (arr1[i] == arr2[i]) {
+            arr2[i] = 0;
+        }
+        else {
+            arr2[i] = 1;
+        }
+    }
+}
+
+void init_s_split(int r[], int s_bits[][6]) {
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 6; j++) {
+            s_bits[i][j] = r[(i * 6) + j];
+        }
+    }
+}
+
+void f_func(const int exp[], const int perm[], int r[], int subk[], int s_perm[]) {
+    int r_exp[48] = { 0 };
+    f_func_expansion(exp, r, r_exp);
+    cout << "r_exp: ";
+    for (int i = 0; i < 48; i++) {
+        cout << r_exp[i];
+    }
+    cout << endl;
+
+    bit_xor(subk, r_exp, 48);
+    cout << "r_xor: ";
+    for (int i = 0; i < 48; i++) {
+        cout << r_exp[i];
+    }
+    cout << endl << endl;
+
+    int init_s_bits[8][6] = { 0 };
+    init_s_split(r_exp, init_s_bits);
+    cout << "s_bits: " << endl;
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 6; j++) {
+            cout << init_s_bits[i][j];
+        }
+        cout << endl;
+    }
+    cout << endl;
+
+
+}
+
 //Converts hexadecimal to binary
 void hex_to_binary(string hex, int binary[]) {
     string num;
@@ -175,17 +291,102 @@ void hex_to_binary(string hex, int binary[]) {
 int main()
 {
     Matrices mtx;
+    string key = "AB15F38C8D6EF36F";
 
-    int binary[64] = { 0 };
-    hex_to_binary("AB15F38C8D6EF36F", binary);
+    // conv key to binary
+    int binary_key[64] = { 0 };
+    hex_to_binary(key, binary_key);
+    cout << "bin key 64: ";
     for (int i = 0; i < 64; i++) {
-        cout << binary[i];
+        cout << binary_key[i];
+    }
+    cout << endl << endl;
+
+    // initial permutation
+    int ip_vals[64] = { 0 };
+    init_perm(mtx.IP, ip_vals, binary_key);
+    cout << "ip vals: ";
+    for (int i = 0; i < 64; i++) {
+        cout << ip_vals[i];
     }
     cout << endl;
 
-    int IP_vals[64] = { 0 };
-    init_perm(mtx.IP, IP_vals, binary);
-    for (int i = 0; i < 64; i++) {
-        cout << IP_vals[i];
+    // initial L/R split
+    int l_split[32] = { 0 };
+    int r_split[32] = { 0 };
+    init_lr_split(ip_vals, l_split, r_split);
+    cout << "l split: ";
+    for (int i = 0; i < 32; i++) {
+        cout << l_split[i];
+    }
+    cout << endl;
+    cout << "r split: ";
+    for (int i = 0; i < 32; i++) {
+        cout << r_split[i];
+    }
+    cout << endl << endl;
+
+    // initial PC-1
+    int binary_key_56[56] = { 0 };
+    pc_1_transform(mtx.PC_1, binary_key, binary_key_56);
+    cout << "bin key 56: ";
+    for (int i = 0; i < 56; i++) {
+        cout << binary_key_56[i];
+    }
+    cout << endl;
+
+    // initial C/D split
+    int c_split[28] = { 0 };
+    int d_split[28] = { 0 };
+    init_cd_split(binary_key_56, c_split, d_split);
+    cout << "c split: ";
+    for (int i = 0; i < 28; i++) {
+        cout << c_split[i];
+    }
+    cout << endl;
+    cout << "d split: ";
+    for (int i = 0; i < 28; i++) {
+        cout << d_split[i];
+    }
+    cout << endl << endl;;
+
+    // rest of C/D splits => subkey generation
+    int subkeys[16][48] = { 0 };
+    for (int i = 0; i < 16; i++) {
+        // 1-bit rotation
+        if (i == 0 || i == 1 || i == 8 || i == 15) {
+            rotate_1(c_split, d_split);
+        }
+        // 2-bit rotation
+        else {
+            rotate_2(c_split, d_split);
+        }
+
+        // combine for new binary_key_56
+        cd_combine(c_split, d_split, binary_key_56);
+
+        // generate subkeys
+        pc_2_transform(mtx.PC_2, binary_key_56, subkeys, i);
+    }
+    cout << "subkeys" << endl;
+    for (int i = 0; i < 16; i++) {
+        cout << i << ": ";
+        for (int j = 0; j < 48; j++) {
+            cout << subkeys[i][j];
+        }
+        cout << endl;
+    }
+    cout << endl;
+
+    // middle L/R splits => f function
+    int s_perm[32] = { 0 };
+    int l_xor[32] = { 0 };
+    // fills L1, R1 to L16, R16
+    // L0, R0 filled in init_lr_split
+    for (int i = 0; i < 16; i++) {
+        f_func(mtx.EXP, mtx.PERM, r_split, subkeys[i], s_perm);
+        //bit_xor();
+        //l_split = r_split;
+        //r_split = l_xor;
     }
 }
