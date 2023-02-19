@@ -44,77 +44,79 @@ public:
     26, 5, 18, 31, 10, 2,  8,  24, 14, 32, 27,
     3,  9, 19, 13, 30, 6,  22, 11, 4,  25 };
 
-    const int S_BOX[8][4][16] = { { { 14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6,
-                    12, 5, 9, 0, 7 },
-                  { 0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12,
-                    11, 9, 5, 3, 8 },
-                  { 4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7,
-                    3, 10, 5, 0 },
-                  { 15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14,
-                    10, 0, 6, 13 } },
+    const int S_BOX[8][64] = { 
+                { 14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6,
+                    12, 5, 9, 0, 7,
+                  0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12,
+                    11, 9, 5, 3, 8,
+                  4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7,
+                    3, 10, 5, 0,
+                  15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14,
+                    10, 0, 6, 13 },
 
-                { { 15, 1, 8, 14, 6, 11, 3, 4, 9, 7, 2, 13,
-                    12, 0, 5, 10 },
-                  { 3, 13, 4, 7, 15, 2, 8, 14, 12, 0, 1, 10,
-                    6, 9, 11, 5 },
-                  { 0, 14, 7, 11, 10, 4, 13, 1, 5, 8, 12, 6,
-                    9, 3, 2, 15 },
-                  { 13, 8, 10, 1, 3, 15, 4, 2, 11, 6, 7, 12,
-                    0, 5, 14, 9 } },
+                { 15, 1, 8, 14, 6, 11, 3, 4, 9, 7, 2, 13,
+                    12, 0, 5, 10,
+                  3, 13, 4, 7, 15, 2, 8, 14, 12, 0, 1, 10,
+                    6, 9, 11, 5,
+                  0, 14, 7, 11, 10, 4, 13, 1, 5, 8, 12, 6,
+                    9, 3, 2, 15,
+                  13, 8, 10, 1, 3, 15, 4, 2, 11, 6, 7, 12,
+                    0, 5, 14, 9 },
 
-                { { 10, 0, 9, 14, 6, 3, 15, 5, 1, 13, 12, 7,
-                    11, 4, 2, 8 },
-                  { 13, 7, 0, 9, 3, 4, 6, 10, 2, 8, 5, 14,
-                    12, 11, 15, 1 },
-                  { 13, 6, 4, 9, 8, 15, 3, 0, 11, 1, 2, 12,
-                    5, 10, 14, 7 },
-                  { 1, 10, 13, 0, 6, 9, 8, 7, 4, 15, 14, 3,
-                    11, 5, 2, 12 } },
+                { 10, 0, 9, 14, 6, 3, 15, 5, 1, 13, 12, 7,
+                    11, 4, 2, 8,
+                  13, 7, 0, 9, 3, 4, 6, 10, 2, 8, 5, 14,
+                    12, 11, 15, 1,
+                  13, 6, 4, 9, 8, 15, 3, 0, 11, 1, 2, 12,
+                    5, 10, 14, 7,
+                  1, 10, 13, 0, 6, 9, 8, 7, 4, 15, 14, 3,
+                    11, 5, 2, 12 },
 
-                { { 7, 13, 14, 3, 0, 6, 9, 10, 1, 2, 8, 5,
-                    11, 12, 4, 15 },
-                  { 13, 8, 11, 5, 6, 15, 0, 3, 4, 7, 2, 12,
-                    1, 10, 14, 9 },
-                  { 10, 6, 9, 0, 12, 11, 7, 13, 15, 1, 3,
-                    14, 5, 2, 8, 4 },
-                  { 3, 15, 0, 6, 10, 1, 13, 8, 9, 4, 5, 11,
-                    12, 7, 2, 14 } },
+                { 7, 13, 14, 3, 0, 6, 9, 10, 1, 2, 8, 5,
+                    11, 12, 4, 15,
+                  13, 8, 11, 5, 6, 15, 0, 3, 4, 7, 2, 12,
+                    1, 10, 14, 9,
+                  10, 6, 9, 0, 12, 11, 7, 13, 15, 1, 3,
+                    14, 5, 2, 8, 4,
+                  3, 15, 0, 6, 10, 1, 13, 8, 9, 4, 5, 11,
+                    12, 7, 2, 14 },
 
-                { { 2, 12, 4, 1, 7, 10, 11, 6, 8, 5, 3, 15,
-                    13, 0, 14, 9 },
-                  { 14, 11, 2, 12, 4, 7, 13, 1, 5, 0, 15,
-                    10, 3, 9, 8, 6 },
-                  { 4, 2, 1, 11, 10, 13, 7, 8, 15, 9, 12, 5,
-                    6, 3, 0, 14 },
-                  { 11, 8, 12, 7, 1, 14, 2, 13, 6, 15, 0, 9,
-                    10, 4, 5, 3 } },
+                { 2, 12, 4, 1, 7, 10, 11, 6, 8, 5, 3, 15,
+                    13, 0, 14, 9,
+                  14, 11, 2, 12, 4, 7, 13, 1, 5, 0, 15,
+                    10, 3, 9, 8, 6,
+                  4, 2, 1, 11, 10, 13, 7, 8, 15, 9, 12, 5,
+                    6, 3, 0, 14,
+                  11, 8, 12, 7, 1, 14, 2, 13, 6, 15, 0, 9,
+                    10, 4, 5, 3 },
 
-                { { 12, 1, 10, 15, 9, 2, 6, 8, 0, 13, 3, 4,
-                    14, 7, 5, 11 },
-                  { 10, 15, 4, 2, 7, 12, 9, 5, 6, 1, 13, 14,
-                    0, 11, 3, 8 },
-                  { 9, 14, 15, 5, 2, 8, 12, 3, 7, 0, 4, 10,
-                    1, 13, 11, 6 },
-                  { 4, 3, 2, 12, 9, 5, 15, 10, 11, 14, 1, 7,
-                    6, 0, 8, 13 } },
+                { 12, 1, 10, 15, 9, 2, 6, 8, 0, 13, 3, 4,
+                    14, 7, 5, 11,
+                  10, 15, 4, 2, 7, 12, 9, 5, 6, 1, 13, 14,
+                    0, 11, 3, 8,
+                  9, 14, 15, 5, 2, 8, 12, 3, 7, 0, 4, 10,
+                    1, 13, 11, 6,
+                  4, 3, 2, 12, 9, 5, 15, 10, 11, 14, 1, 7,
+                    6, 0, 8, 13 },
 
-                { { 4, 11, 2, 14, 15, 0, 8, 13, 3, 12, 9, 7,
-                    5, 10, 6, 1 },
-                  { 13, 0, 11, 7, 4, 9, 1, 10, 14, 3, 5, 12,
-                    2, 15, 8, 6 },
-                  { 1, 4, 11, 13, 12, 3, 7, 14, 10, 15, 6,
-                    8, 0, 5, 9, 2 },
-                  { 6, 11, 13, 8, 1, 4, 10, 7, 9, 5, 0, 15,
-                    14, 2, 3, 12 } },
+                { 4, 11, 2, 14, 15, 0, 8, 13, 3, 12, 9, 7,
+                    5, 10, 6, 1,
+                  13, 0, 11, 7, 4, 9, 1, 10, 14, 3, 5, 12,
+                    2, 15, 8, 6,
+                  1, 4, 11, 13, 12, 3, 7, 14, 10, 15, 6,
+                    8, 0, 5, 9, 2,
+                  6, 11, 13, 8, 1, 4, 10, 7, 9, 5, 0, 15,
+                    14, 2, 3, 12 },
 
-                { { 13, 2, 8, 4, 6, 15, 11, 1, 10, 9, 3, 14,
-                    5, 0, 12, 7 },
-                  { 1, 15, 13, 8, 10, 3, 7, 4, 12, 5, 6, 11,
-                    0, 14, 9, 2 },
-                  { 7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13,
-                    15, 3, 5, 8 },
-                  { 2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0,
-                    3, 5, 6, 11 } } };
+                { 13, 2, 8, 4, 6, 15, 11, 1, 10, 9, 3, 14,
+                    5, 0, 12, 7,
+                  1, 15, 13, 8, 10, 3, 7, 4, 12, 5, 6, 11,
+                    0, 14, 9, 2,
+                  7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13,
+                    15, 3, 5, 8,
+                  2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0,
+                    3, 5, 6, 11 } 
+                };
 
     Matrices() = default;
     ~Matrices() = default;
@@ -216,7 +218,74 @@ void init_s_split(int r[], int s_bits[][6]) {
     }
 }
 
-void f_func(const int exp[], const int perm[], int r[], int subk[], int s_perm[]) {
+int binary_to_dec(int binary[], int bin_len) {
+    int dec = 0;
+
+    for (int i = 0; i < bin_len; i++) {
+        dec += binary[i] * int(pow(2, (bin_len - 1 - i)));
+    }
+
+    return dec;
+}
+
+void dec_to_binary(int dec, int binary[]) {
+    int r;
+    int q;
+    //int init_dec = dec;
+    int binary_rev[4] = { 0 };
+
+    for (int i = 0; i < 4; i++) {
+        //if (init_dec < 8) {
+        //    init_dec = 100;
+        //    binary_rev[0] = 0;
+        //    continue;
+        //}
+        r = dec % 2;
+        q = dec / 2;    // int division
+
+        binary_rev[i] = r;
+        dec = q;
+    }
+
+    int end = 3;
+    for (int i = 0; i < 4; i++) {
+        binary[i] = binary_rev[end];
+        end--;
+    }
+}
+
+void s_box_transform(const int s_box[][64], int s_bits_6[][6], int s_bits_4[][4]) {
+    for (int i = 0; i < 8; i++) {
+        int row_arr[2] = { s_bits_6[i][0], s_bits_6[i][5] };
+        int col_arr[4] = { s_bits_6[i][1], s_bits_6[i][2], s_bits_6[i][3], s_bits_6[i][4] };
+
+        int row = binary_to_dec(row_arr, 2);
+        int col = binary_to_dec(col_arr, 4);
+
+        int cell_num = (row * 16) + col;
+        int cell_content = s_box[i][cell_num];
+
+        dec_to_binary(cell_content, s_bits_4[i]);
+    }
+}
+
+void f_func_perm(const int perm[], int s_bit_4[][4], int s_perm[]) {
+    int s_4_combined[32] = { 0 };
+    
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 4; j++) {
+            s_4_combined[(i * 4) + j] = s_bit_4[i][j];
+        }
+    }
+
+    for (int i = 0; i < 32; i++) {
+        int cell_val = perm[i];
+        int bin_val = s_4_combined[cell_val - 1];
+        s_perm[i] = bin_val;
+    }
+}
+
+void f_func(const int exp[], const int perm[], const int s_box[][64], int r[], int subk[], int s_perm[]) {
     int r_exp[48] = { 0 };
     f_func_expansion(exp, r, r_exp);
     cout << "r_exp: ";
@@ -242,11 +311,42 @@ void f_func(const int exp[], const int perm[], int r[], int subk[], int s_perm[]
         cout << endl;
     }
     cout << endl;
+    
+    int s_bits_4[8][4] = { 0 };
+    s_box_transform(s_box, init_s_bits, s_bits_4);
+    cout << "s_bits transform: " << endl;
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 4; j++) {
+            cout << s_bits_4[i][j];
+        }
+        cout << endl;
+    }
+    cout << endl;
 
-
+    f_func_perm(perm, s_bits_4, s_perm);
+    cout << "s_perm: ";
+    for (int i = 0; i < 32; i++) {
+        cout << s_perm[i];
+    }
+    cout << endl;
 }
 
-//Converts hexadecimal to binary
+void lr_combine(int l[], int r[], int comb[]) {
+    for (int i = 0; i < 32; i++) {
+        comb[i] = r[i];
+        comb[32 + i] = l[i];
+    }
+}
+
+void inv_perm(const int IP_1[], int ip_vals[], int binary[]) {
+    for (int i = 0; i < 64; i++) {
+        int cell_val = IP_1[i];
+        int bin_val = binary[cell_val - 1];
+        ip_vals[i] = bin_val;
+    }
+}
+
+// Converts hexadecimal to binary
 void hex_to_binary(string hex, int binary[]) {
     string num;
     //int len = hex.length();
@@ -288,14 +388,45 @@ void hex_to_binary(string hex, int binary[]) {
     }
 }
 
+string binary_to_hex(int binary[]) {
+    string hex = "";
+    int bin_group[16][4] = { 0 };
+
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 4; j++) {
+            bin_group[i][j] = binary[(i * 4) + j];
+        }
+    }
+
+    for (int i = 0; i < 16; i++) {
+        int num = binary_to_dec(bin_group[i], 4);
+
+        if (num > 9) {
+            num = num - 10 + 65;
+            char num_hex = char(num);
+            hex += num_hex;
+        }
+        else {
+            hex += to_string(num);
+        }
+    }
+    cout << "cipher " << hex;
+    return hex;
+}
+
 int main()
 {
     Matrices mtx;
-    string key = "AB15F38C8D6EF36F";
+    string input = "123456ABCD132536";
+    string key = "AABB09182736CCDD";
 
-    // conv key to binary
+    // conv key, input to binary
     int binary_key[64] = { 0 };
     hex_to_binary(key, binary_key);
+
+    int binary_input[64] = { 0 };
+    hex_to_binary(input, binary_input);
+
     cout << "bin key 64: ";
     for (int i = 0; i < 64; i++) {
         cout << binary_key[i];
@@ -304,7 +435,7 @@ int main()
 
     // initial permutation
     int ip_vals[64] = { 0 };
-    init_perm(mtx.IP, ip_vals, binary_key);
+    init_perm(mtx.IP, ip_vals, binary_input);
     cout << "ip vals: ";
     for (int i = 0; i < 64; i++) {
         cout << ip_vals[i];
@@ -380,13 +511,29 @@ int main()
 
     // middle L/R splits => f function
     int s_perm[32] = { 0 };
-    int l_xor[32] = { 0 };
+    //int l_xor[32] = { 0 };
     // fills L1, R1 to L16, R16
     // L0, R0 filled in init_lr_split
-    for (int i = 0; i < 16; i++) {
-        f_func(mtx.EXP, mtx.PERM, r_split, subkeys[i], s_perm);
-        //bit_xor();
-        //l_split = r_split;
-        //r_split = l_xor;
+    for (int i = 0; i < 16; i++) {   // FIXME change < 1 to < 16
+        f_func(mtx.EXP, mtx.PERM, mtx.S_BOX, r_split, subkeys[i], s_perm);
+        bit_xor(l_split, s_perm, 32);
+        for (int j = 0; j < 32; j++) {
+            l_split[j] = r_split[j];
+            r_split[j] = s_perm[j];
+        }
     }
+
+    //IP^-1
+    int final_perm[64] = { 0 };
+    lr_combine(l_split, r_split, final_perm);
+
+    int ciphertext_bin[64] = { 0 };
+    inv_perm(mtx.IP_1, ciphertext_bin, final_perm);
+    cout << "ciphertext bin " << endl;
+    for (int i = 0; i < 64; i++) {
+        cout << ciphertext_bin[i];
+    }
+    cout << endl;
+
+    string ciphertext = binary_to_hex(ciphertext_bin);
 }
