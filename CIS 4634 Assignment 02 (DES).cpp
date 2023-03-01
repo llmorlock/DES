@@ -414,6 +414,14 @@ string binary_to_hex(int binary[]) {
     return hex;
 }
 
+void key_reverse(int keys[][48], int rev_keys[][48]) {
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 48; j++) {
+            rev_keys[15 - i][j] = keys[i][j];
+        }
+    }
+}
+
 int main()
 {
     Matrices mtx;
@@ -536,4 +544,103 @@ int main()
     cout << endl;
 
     string ciphertext = binary_to_hex(ciphertext_bin);
+
+    /********************** decrypt **********************/
+    int rev_keys[16][48] = { 0 };
+    key_reverse(subkeys, rev_keys);
+    
+    // initial permutation
+    //ip_vals[64] = { 0 };
+    init_perm(mtx.IP, ip_vals, ciphertext_bin);
+    cout << "ip vals: ";
+    for (int i = 0; i < 64; i++) {
+        cout << ip_vals[i];
+    }
+    cout << endl;
+
+    // initial L/R split
+    //l_split[32] = { 0 };
+    //r_split[32] = { 0 };
+    init_lr_split(ip_vals, l_split, r_split);
+    cout << "l split: ";
+    for (int i = 0; i < 32; i++) {
+        cout << l_split[i];
+    }
+    cout << endl;
+    cout << "r split: ";
+    for (int i = 0; i < 32; i++) {
+        cout << r_split[i];
+    }
+    cout << endl << endl;
+
+    // initial PC-1
+    //binary_key_56[56] = { 0 };
+    //pc_1_transform(mtx.PC_1, binary_key, binary_key_56);
+    //cout << "bin key 56: ";
+    //for (int i = 0; i < 56; i++) {
+    //    cout << binary_key_56[i];
+    //}
+    //cout << endl;
+
+    //// initial C/D split
+    ////c_split[28] = { 0 };
+    ////d_split[28] = { 0 };
+    //init_cd_split(binary_key_56, c_split, d_split);
+    //cout << "c split: ";
+    //for (int i = 0; i < 28; i++) {
+    //    cout << c_split[i];
+    //}
+    //cout << endl;
+    //cout << "d split: ";
+    //for (int i = 0; i < 28; i++) {
+    //    cout << d_split[i];
+    //}
+    //cout << endl << endl;;
+
+    //// rest of C/D splits
+    ////int subkeys[16][48] = { 0 };
+    //for (int i = 0; i < 16; i++) {
+    //    // 1-bit rotation
+    //    if (i == 0 || i == 1 || i == 8 || i == 15) {
+    //        rotate_1(c_split, d_split);
+    //    }
+    //    // 2-bit rotation
+    //    else {
+    //        rotate_2(c_split, d_split);
+    //    }
+
+    //    // combine for new binary_key_56
+    //    cd_combine(c_split, d_split, binary_key_56);
+
+    //    // generate subkeys
+    //    //pc_2_transform(mtx.PC_2, binary_key_56, subkeys, i);
+    //}
+
+    // middle L/R splits => f function
+    //s_perm[32] = { 0 };
+    //int l_xor[32] = { 0 };
+    // fills L1, R1 to L16, R16
+    // L0, R0 filled in init_lr_split
+    for (int i = 0; i < 16; i++) {   // FIXME change < 1 to < 16
+        f_func(mtx.EXP, mtx.PERM, mtx.S_BOX, r_split, rev_keys[i], s_perm);
+        bit_xor(l_split, s_perm, 32);
+        for (int j = 0; j < 32; j++) {
+            l_split[j] = r_split[j];
+            r_split[j] = s_perm[j];
+        }
+    }
+
+    //IP^-1
+    //final_perm[64] = { 0 };
+    lr_combine(l_split, r_split, final_perm);
+
+    int decoded_bin[64] = { 0 };
+    inv_perm(mtx.IP_1, decoded_bin, final_perm);
+    cout << "decoded bin " << endl;
+    for (int i = 0; i < 64; i++) {
+        cout << decoded_bin[i];
+    }
+    cout << endl;
+
+    string decoded = binary_to_hex(decoded_bin);
 }
