@@ -235,11 +235,6 @@ void dec_to_binary(int dec, int binary[]) {
     int binary_rev[4] = { 0 };
 
     for (int i = 0; i < 4; i++) {
-        //if (init_dec < 8) {
-        //    init_dec = 100;
-        //    binary_rev[0] = 0;
-        //    continue;
-        //}
         r = dec % 2;
         q = dec / 2;    // int division
 
@@ -288,47 +283,16 @@ void f_func_perm(const int perm[], int s_bit_4[][4], int s_perm[]) {
 void f_func(const int exp[], const int perm[], const int s_box[][64], int r[], int subk[], int s_perm[]) {
     int r_exp[48] = { 0 };
     f_func_expansion(exp, r, r_exp);
-    cout << "r_exp: ";
-    for (int i = 0; i < 48; i++) {
-        cout << r_exp[i];
-    }
-    cout << endl;
 
     bit_xor(subk, r_exp, 48);
-    cout << "r_xor: ";
-    for (int i = 0; i < 48; i++) {
-        cout << r_exp[i];
-    }
-    cout << endl << endl;
 
     int init_s_bits[8][6] = { 0 };
     init_s_split(r_exp, init_s_bits);
-    cout << "s_bits: " << endl;
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 6; j++) {
-            cout << init_s_bits[i][j];
-        }
-        cout << endl;
-    }
-    cout << endl;
     
     int s_bits_4[8][4] = { 0 };
     s_box_transform(s_box, init_s_bits, s_bits_4);
-    cout << "s_bits transform: " << endl;
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 4; j++) {
-            cout << s_bits_4[i][j];
-        }
-        cout << endl;
-    }
-    cout << endl;
 
     f_func_perm(perm, s_bits_4, s_perm);
-    cout << "s_perm: ";
-    for (int i = 0; i < 32; i++) {
-        cout << s_perm[i];
-    }
-    cout << endl;
 }
 
 void lr_combine(int l[], int r[], int comb[]) {
@@ -349,27 +313,21 @@ void inv_perm(const int IP_1[], int ip_vals[], int binary[]) {
 // Converts hexadecimal to binary
 void hex_to_binary(string hex, int binary[]) {
     string num;
-    //int len = hex.length();
     int binary_rev[64];
     int num_split;
     int r;
     int q;
 
     for (int i = 0; i < 16; i++) {
-        //cout << hex[i];
         num = hex[i];
-        //cout << num;
 
         // convert letters to ints via ascii
         if (num == "A" || num ==  "B" || num ==  "C" || num ==  "D" || num ==  "E" || num ==  "F" ) {
             num_split = int(hex[i] - 65 + 10);
-            cout << "entered split";
         }
         else {
             num_split = hex[i] - '0';
         }
-
-        cout << "num split " << num_split << endl;
 
         for (int j = 0; j < 4; j++) {
             r = num_split % 2;
@@ -410,7 +368,7 @@ string binary_to_hex(int binary[]) {
             hex += to_string(num);
         }
     }
-    cout << "cipher " << hex;
+
     return hex;
 }
 
@@ -425,222 +383,217 @@ void key_reverse(int keys[][48], int rev_keys[][48]) {
 int main()
 {
     Matrices mtx;
-    string input = "123456ABCD132536";
-    string key = "AABB09182736CCDD";
+    //string input_init = "123456ABCD1325361";
+    //string key = "AABB09182736CCDD";
 
-    // conv key, input to binary
-    int binary_key[64] = { 0 };
-    hex_to_binary(key, binary_key);
+    // get input
+    cout << "Input your message in hexadecimal. Maximum length is 320 places." << endl;
+    string input_init;
+    cin >> input_init;
+    cout << "Input your key in hexadecimal. Key must be exactly 16 places long." << endl;
+    string key;
+    cin >> key;
 
-    int binary_input[64] = { 0 };
-    hex_to_binary(input, binary_input);
-
-    cout << "bin key 64: ";
-    for (int i = 0; i < 64; i++) {
-        cout << binary_key[i];
+    // check input length
+    if (input_init.length() > 320) {
+        cout << "Message length too long.";
+        return -1;
     }
-    cout << endl << endl;
+    if (key.length() != 16) {
+        cout << "Key not of length 16.";
+        return -1;
+    }
 
-    // initial permutation
-    int ip_vals[64] = { 0 };
-    init_perm(mtx.IP, ip_vals, binary_input);
-    cout << "ip vals: ";
-    for (int i = 0; i < 64; i++) {
-        cout << ip_vals[i];
+    // make hex uppercase
+    for (int i = 0; i < input_init.length(); i++) {
+        input_init[i] = toupper(input_init[i]);
     }
-    cout << endl;
-
-    // initial L/R split
-    int l_split[32] = { 0 };
-    int r_split[32] = { 0 };
-    init_lr_split(ip_vals, l_split, r_split);
-    cout << "l split: ";
-    for (int i = 0; i < 32; i++) {
-        cout << l_split[i];
-    }
-    cout << endl;
-    cout << "r split: ";
-    for (int i = 0; i < 32; i++) {
-        cout << r_split[i];
-    }
-    cout << endl << endl;
-
-    // initial PC-1
-    int binary_key_56[56] = { 0 };
-    pc_1_transform(mtx.PC_1, binary_key, binary_key_56);
-    cout << "bin key 56: ";
-    for (int i = 0; i < 56; i++) {
-        cout << binary_key_56[i];
-    }
-    cout << endl;
-
-    // initial C/D split
-    int c_split[28] = { 0 };
-    int d_split[28] = { 0 };
-    init_cd_split(binary_key_56, c_split, d_split);
-    cout << "c split: ";
-    for (int i = 0; i < 28; i++) {
-        cout << c_split[i];
-    }
-    cout << endl;
-    cout << "d split: ";
-    for (int i = 0; i < 28; i++) {
-        cout << d_split[i];
-    }
-    cout << endl << endl;;
-
-    // rest of C/D splits => subkey generation
-    int subkeys[16][48] = { 0 };
     for (int i = 0; i < 16; i++) {
-        // 1-bit rotation
-        if (i == 0 || i == 1 || i == 8 || i == 15) {
-            rotate_1(c_split, d_split);
+        key[i] = toupper(key[i]);
+    }
+
+    int ttl_inp_len = input_init.length();
+    int num_blocks = ceil(input_init.length() / 16.0);
+    string input_arr[20] = { "" };
+
+    // ECB
+    bool first = true;
+    for (int k = 0; k < num_blocks; k++) {
+        if (ttl_inp_len <= 16 && first) {
+            input_arr[k] = input_init;
+            for (int i = ttl_inp_len; i < 16; i++) {
+                input_arr[k] += '0';
+            }
+            first = false;
         }
-        // 2-bit rotation
+        else if (ttl_inp_len <= 16) {
+            for (int i = 0; i < ttl_inp_len; i++) {
+                input_arr[k] += input_init[(k * 16) + i];
+            }
+            for (int i = ttl_inp_len; i < 16; i++) {
+                input_arr[k] += '0';
+            }
+        }
         else {
-            rotate_2(c_split, d_split);
-        }
-
-        // combine for new binary_key_56
-        cd_combine(c_split, d_split, binary_key_56);
-
-        // generate subkeys
-        pc_2_transform(mtx.PC_2, binary_key_56, subkeys, i);
-    }
-    cout << "subkeys" << endl;
-    for (int i = 0; i < 16; i++) {
-        cout << i << ": ";
-        for (int j = 0; j < 48; j++) {
-            cout << subkeys[i][j];
-        }
-        cout << endl;
-    }
-    cout << endl;
-
-    // middle L/R splits => f function
-    int s_perm[32] = { 0 };
-    //int l_xor[32] = { 0 };
-    // fills L1, R1 to L16, R16
-    // L0, R0 filled in init_lr_split
-    for (int i = 0; i < 16; i++) {   // FIXME change < 1 to < 16
-        f_func(mtx.EXP, mtx.PERM, mtx.S_BOX, r_split, subkeys[i], s_perm);
-        bit_xor(l_split, s_perm, 32);
-        for (int j = 0; j < 32; j++) {
-            l_split[j] = r_split[j];
-            r_split[j] = s_perm[j];
+            for (int i = 0; i < 16; i++) {
+                input_arr[k] += input_init[(k * 16) + i];
+            }
+            ttl_inp_len -= 16;
+            first = false;
         }
     }
 
-    //IP^-1
-    int final_perm[64] = { 0 };
-    lr_combine(l_split, r_split, final_perm);
-
-    int ciphertext_bin[64] = { 0 };
-    inv_perm(mtx.IP_1, ciphertext_bin, final_perm);
-    cout << "ciphertext bin " << endl;
-    for (int i = 0; i < 64; i++) {
-        cout << ciphertext_bin[i];
-    }
-    cout << endl;
-
-    string ciphertext = binary_to_hex(ciphertext_bin);
-
-    /********************** decrypt **********************/
-    int rev_keys[16][48] = { 0 };
-    key_reverse(subkeys, rev_keys);
+    string ciphertext[20] = { "" }, decoded[20] = { "" };
     
-    // initial permutation
-    //ip_vals[64] = { 0 };
-    init_perm(mtx.IP, ip_vals, ciphertext_bin);
-    cout << "ip vals: ";
-    for (int i = 0; i < 64; i++) {
-        cout << ip_vals[i];
-    }
-    cout << endl;
+    for (int k = 0; k < num_blocks; k++) {
+        /********************** encrypt **********************/
 
-    // initial L/R split
-    //l_split[32] = { 0 };
-    //r_split[32] = { 0 };
-    init_lr_split(ip_vals, l_split, r_split);
-    cout << "l split: ";
-    for (int i = 0; i < 32; i++) {
-        cout << l_split[i];
-    }
-    cout << endl;
-    cout << "r split: ";
-    for (int i = 0; i < 32; i++) {
-        cout << r_split[i];
-    }
-    cout << endl << endl;
+        // conv key, input to binary
+        int binary_key[64] = { 0 };
+        hex_to_binary(key, binary_key);
 
-    // initial PC-1
-    //binary_key_56[56] = { 0 };
-    //pc_1_transform(mtx.PC_1, binary_key, binary_key_56);
-    //cout << "bin key 56: ";
-    //for (int i = 0; i < 56; i++) {
-    //    cout << binary_key_56[i];
-    //}
-    //cout << endl;
+        int binary_input[64] = { 0 };
+        hex_to_binary(input_arr[k], binary_input);
 
-    //// initial C/D split
-    ////c_split[28] = { 0 };
-    ////d_split[28] = { 0 };
-    //init_cd_split(binary_key_56, c_split, d_split);
-    //cout << "c split: ";
-    //for (int i = 0; i < 28; i++) {
-    //    cout << c_split[i];
-    //}
-    //cout << endl;
-    //cout << "d split: ";
-    //for (int i = 0; i < 28; i++) {
-    //    cout << d_split[i];
-    //}
-    //cout << endl << endl;;
+        // initial permutation
+        int ip_vals[64] = { 0 };
+        init_perm(mtx.IP, ip_vals, binary_input);
 
-    //// rest of C/D splits
-    ////int subkeys[16][48] = { 0 };
-    //for (int i = 0; i < 16; i++) {
-    //    // 1-bit rotation
-    //    if (i == 0 || i == 1 || i == 8 || i == 15) {
-    //        rotate_1(c_split, d_split);
-    //    }
-    //    // 2-bit rotation
-    //    else {
-    //        rotate_2(c_split, d_split);
-    //    }
+        // initial L/R split
+        int l_split[32] = { 0 };
+        int r_split[32] = { 0 };
+        init_lr_split(ip_vals, l_split, r_split);
 
-    //    // combine for new binary_key_56
-    //    cd_combine(c_split, d_split, binary_key_56);
+        // initial PC-1
+        int binary_key_56[56] = { 0 };
+        pc_1_transform(mtx.PC_1, binary_key, binary_key_56);
 
-    //    // generate subkeys
-    //    //pc_2_transform(mtx.PC_2, binary_key_56, subkeys, i);
-    //}
+        // initial C/D split
+        int c_split[28] = { 0 };
+        int d_split[28] = { 0 };
+        init_cd_split(binary_key_56, c_split, d_split);
 
-    // middle L/R splits => f function
-    //s_perm[32] = { 0 };
-    //int l_xor[32] = { 0 };
-    // fills L1, R1 to L16, R16
-    // L0, R0 filled in init_lr_split
-    for (int i = 0; i < 16; i++) {   // FIXME change < 1 to < 16
-        f_func(mtx.EXP, mtx.PERM, mtx.S_BOX, r_split, rev_keys[i], s_perm);
-        bit_xor(l_split, s_perm, 32);
-        for (int j = 0; j < 32; j++) {
-            l_split[j] = r_split[j];
-            r_split[j] = s_perm[j];
+        // rest of C/D splits => subkey generation
+        int subkeys[16][48] = { 0 };
+        for (int i = 0; i < 16; i++) {
+            // 1-bit rotation
+            if (i == 0 || i == 1 || i == 8 || i == 15) {
+                rotate_1(c_split, d_split);
+            }
+            // 2-bit rotation
+            else {
+                rotate_2(c_split, d_split);
+            }
+
+            // combine for new binary_key_56
+            cd_combine(c_split, d_split, binary_key_56);
+
+            // generate subkeys
+            pc_2_transform(mtx.PC_2, binary_key_56, subkeys, i);
         }
+
+        // middle L/R splits => f function
+        int s_perm[32] = { 0 };
+        //int l_xor[32] = { 0 };
+        // fills L1, R1 to L16, R16
+        // L0, R0 filled in init_lr_split
+        for (int i = 0; i < 16; i++) {
+            f_func(mtx.EXP, mtx.PERM, mtx.S_BOX, r_split, subkeys[i], s_perm);
+            bit_xor(l_split, s_perm, 32);
+            for (int j = 0; j < 32; j++) {
+                l_split[j] = r_split[j];
+                r_split[j] = s_perm[j];
+            }
+        }
+
+        //IP^-1
+        int final_perm[64] = { 0 };
+        lr_combine(l_split, r_split, final_perm);
+
+        int ciphertext_bin[64] = { 0 };
+        inv_perm(mtx.IP_1, ciphertext_bin, final_perm);
+        //cout << "ciphertext bin " << endl;
+        //for (int i = 0; i < 64; i++) {
+        //    cout << ciphertext_bin[i];
+        //}
+        //cout << endl;
+
+        ciphertext[k] = binary_to_hex(ciphertext_bin);
+        
+
+        /********************** decrypt **********************/
+        int rev_keys[16][48] = { 0 };
+        key_reverse(subkeys, rev_keys);
+
+        // initial permutation
+        init_perm(mtx.IP, ip_vals, ciphertext_bin);
+
+
+        // initial L/R split
+        init_lr_split(ip_vals, l_split, r_split);
+
+
+        // initial PC-1
+        pc_1_transform(mtx.PC_1, binary_key, binary_key_56);
+
+
+        // initial C/D split
+        init_cd_split(binary_key_56, c_split, d_split);
+
+
+        // rest of C/D splits
+        for (int i = 0; i < 16; i++) {
+            // 1-bit rotation
+            if (i == 0 || i == 1 || i == 8 || i == 15) {
+                rotate_1(c_split, d_split);
+            }
+            // 2-bit rotation
+            else {
+                rotate_2(c_split, d_split);
+            }
+
+            // combine for new binary_key_56
+            cd_combine(c_split, d_split, binary_key_56);
+
+        }
+
+        // middle L/R splits => f function
+        // fills L1, R1 to L16, R16
+        // L0, R0 filled in init_lr_split
+        for (int i = 0; i < 16; i++) {
+            f_func(mtx.EXP, mtx.PERM, mtx.S_BOX, r_split, rev_keys[i], s_perm);
+            bit_xor(l_split, s_perm, 32);
+            for (int j = 0; j < 32; j++) {
+                l_split[j] = r_split[j];
+                r_split[j] = s_perm[j];
+            }
+        }
+
+        //IP^-1
+        //final_perm[64] = { 0 };
+        lr_combine(l_split, r_split, final_perm);
+
+        int decoded_bin[64] = { 0 };
+        inv_perm(mtx.IP_1, decoded_bin, final_perm);
+        //cout << "decoded bin " << endl;
+        //for (int i = 0; i < 64; i++) {
+        //    cout << decoded_bin[i];
+        //}
+        //cout << endl;
+
+        decoded[k] = binary_to_hex(decoded_bin);
     }
 
-    //IP^-1
-    //final_perm[64] = { 0 };
-    lr_combine(l_split, r_split, final_perm);
-
-    int decoded_bin[64] = { 0 };
-    inv_perm(mtx.IP_1, decoded_bin, final_perm);
-    cout << "decoded bin " << endl;
-    for (int i = 0; i < 64; i++) {
-        cout << decoded_bin[i];
+    cout << "Ciphertext is: ";
+    for (int k = 0; k < num_blocks; k++) {
+        cout << ciphertext[k] << " ";
     }
     cout << endl;
 
-    string decoded = binary_to_hex(decoded_bin);
+    cout << "Plaintext is: ";
+    for (int k = 0; k < num_blocks; k++) {
+        cout << decoded[k] << " ";
+    }
+    
+    return 0;
 }
